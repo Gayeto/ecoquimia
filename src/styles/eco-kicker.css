@@ -1,0 +1,13 @@
+/* Igualito al .covL-kicker */
+.eco-kicker {
+  display: inline-flex;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(161, 201, 232, 0.35);
+  border: 1px solid rgba(84, 158, 214, 0.2);
+  color: rgba(10, 40, 70, 0.75);
+  font-weight: 700;              /* ✅ negritas */
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-size: 12px;
+}

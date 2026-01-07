@@ -1,0 +1,208 @@
+.cov-section {
+  position: relative;
+  padding: 72px 0 90px;
+  background: linear-gradient(180deg, #ffffff 0%, #f6fbff 45%, #ffffff 100%);
+}
+
+.cov-container {
+  margin: 0 auto;
+  max-width: 1200px;
+  padding: 0 24px;
+}
+
+.cov-header {
+  text-align: center;
+  margin-bottom: 22px;
+}
+
+.cov-kicker {
+  display: inline-flex;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(161, 201, 232, 0.35);
+  border: 1px solid rgba(84, 158, 214, 0.20);
+  color: rgba(10, 40, 70, 0.75);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+.cov-title {
+  margin: 14px 0 8px;
+  font-size: clamp(28px, 3vw, 44px);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: rgba(10, 30, 55, 0.92);
+  font-weight: 800;
+}
+
+.cov-subtitle {
+  margin: 0 auto;
+  max-width: 760px;
+  color: rgba(10, 30, 55, 0.62);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.cov-chips {
+  margin-top: 18px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.cov-chip {
+  border: 1px solid rgba(10, 40, 70, 0.12);
+  background: rgba(255, 255, 255, 0.75);
+  color: rgba(10, 40, 70, 0.72);
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 160ms ease, border-color 160ms ease, transform 120ms ease, color 160ms ease;
+}
+
+.cov-chip:hover {
+  transform: translateY(-1px);
+  border-color: rgba(84, 158, 214, 0.35);
+  background: rgba(161, 201, 232, 0.28);
+}
+
+.cov-chip.is-active {
+  background: rgba(84, 158, 214, 0.22);
+  border-color: rgba(84, 158, 214, 0.45);
+  color: rgba(10, 40, 70, 0.92);
+}
+
+/* FULL BLEED helper */
+.cov-bleed {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+}
+
+.cov-mapShell {
+  padding: 22px 24px 0;
+}
+
+.cov-mapFrame {
+  position: relative;
+  margin: 0 auto;
+  width: min(1400px, 100%);
+  aspect-ratio: 16 / 7;
+  border-radius: 28px;
+  overflow: hidden;
+  border: 1px solid rgba(10, 40, 70, 0.10);
+  background: #f6fbff;
+  box-shadow: 0 22px 60px rgba(0,0,0,0.10);
+}
+
+.cov-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.cov-hotspots {
+  position: absolute;
+  inset: 0;
+}
+
+.cov-hotspot {
+  position: absolute;
+  transform: translate(-50%, -65%);
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.cov-hotspot:focus-visible {
+  outline: 3px solid rgba(84, 158, 214, 0.35);
+  outline-offset: 2px;
+  border-radius: 999px;
+}
+
+.cov-tooltip {
+  position: absolute;
+  transform: translate(-50%, calc(-100% - 16px));
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(10, 40, 70, 0.10);
+  border-radius: 16px;
+  padding: 10px 12px;
+  min-width: 180px;
+  box-shadow: 0 18px 40px rgba(0,0,0,0.16);
+  backdrop-filter: blur(10px);
+  pointer-events: none;
+}
+
+.cov-tooltipTitle {
+  font-weight: 800;
+  color: rgba(10, 30, 55, 0.92);
+  font-size: 13px;
+}
+
+.cov-tooltipNote {
+  margin-top: 2px;
+  color: rgba(10, 30, 55, 0.62);
+  font-size: 12px;
+}
+
+.cov-tooltipHint {
+  margin-top: 6px;
+  color: rgba(10, 30, 55, 0.45);
+  font-size: 11px;
+}
+
+.cov-legend {
+  width: min(1400px, 100%);
+  margin: 12px auto 0;
+  display: flex;
+  gap: 18px;
+  justify-content: center;
+  color: rgba(10, 30, 55, 0.55);
+  font-size: 12px;
+}
+
+.cov-legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cov-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  display: inline-block;
+}
+
+.cov-dot.is-primary {
+  background: #549ED6;
+}
+
+.cov-dot.is-secondary {
+  background: #A1C9E8;
+}
+
+@media (max-width: 900px) {
+  .cov-section {
+    padding: 54px 0 70px;
+  }
+
+  .cov-mapFrame {
+    aspect-ratio: 4 / 3;
+    border-radius: 22px;
+  }
+
+  .cov-mapShell {
+    padding: 18px 14px 0;
+  }
+}

@@ -1,0 +1,341 @@
+:root {
+  /* topbar 28 + nav 80 = 108 */
+  --sw-header-h: 108px;
+
+  --sw-green: #97c55f;
+  --sw-blue: #1e4f73;      /* azul oscuro texto */
+  --sw-blue-2: #143a55;    /* hover más oscuro */
+  --sw-ink: rgba(0, 0, 0, 0.75);
+}
+
+@media (max-width: 980px) {
+  /* topbar 28 + row 72 + menu (no cuenta) */
+  --sw-header-h: 110px;
+}
+
+/* Para que el contenido no quede tapado por el header fijo */
+body {
+  padding-top: var(--sw-header-h);
+}
+
+/* Para subir el hero y quitar la franja blanca (si lo usas) */
+.sw-hero-offset {
+  margin-top: calc(-1 * var(--sw-header-h));
+  padding-top: var(--sw-header-h);
+}
+
+/* ===== fijo ===== */
+.sw-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 9999;
+}
+
+/* barra superior */
+.sw-topbar {
+  height: 28px;
+  background: var(--sw-green);
+}
+
+/* shell */
+.sw-shell {
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.06);
+}
+
+/* ===== DESKTOP / MOBILE toggle ===== */
+.sw-desktop { display: block; }
+.sw-mobile { display: none; }
+
+@media (max-width: 980px) {
+  .sw-desktop { display: none; }
+  .sw-mobile { display: block; }
+}
+
+/* ===== DESKTOP LAYOUT ===== */
+.sw-nav {
+  position: relative;
+  height: 80px;
+  width: 100%;
+  margin: 0;
+  padding: 0 28px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+/* izquierda */
+.sw-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+/* Links pro (ghost + underline) */
+.sw-link {
+  border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  font-size: 13px;
+  font-weight: 600;
+  padding: 9px 10px;
+  border-radius: 12px;
+
+  color: var(--sw-blue);
+  white-space: nowrap;
+
+  transition: background 160ms ease, border-color 160ms ease, transform 120ms ease;
+  position: relative;
+}
+
+.sw-link::after {
+  content: "";
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 6px;
+  height: 2px;
+  background: var(--sw-green);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 160ms ease;
+  border-radius: 999px;
+  opacity: 0.95;
+}
+
+.sw-link:hover {
+  background: rgba(30, 79, 115, 0.08);
+  border-color: rgba(30, 79, 115, 0.15);
+  transform: translateY(-1px);
+}
+
+.sw-link:hover::after {
+  transform: scaleX(1);
+}
+
+.sw-link:active {
+  transform: translateY(0);
+}
+
+.sw-link:focus-visible {
+  outline: 3px solid rgba(30, 79, 115, 0.28);
+  outline-offset: 2px;
+}
+
+.sw-link-ic {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.sw-link-txt {
+  line-height: 1;
+}
+
+/* centro (logo + marca) */
+.sw-center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+
+  border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 16px;
+
+  transition: background 160ms ease, border-color 160ms ease;
+}
+
+.sw-center:hover {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.06);
+}
+
+.sw-logo {
+  width: 38px;
+  height: 38px;
+}
+
+.sw-brand {
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  color: rgba(0, 0, 0, 0.72);
+}
+
+/* derecha (CTA contacto) */
+.sw-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+.sw-cta {
+  border: 0;
+  cursor: pointer;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 10px 14px;
+  border-radius: 999px;
+
+  background: var(--sw-blue);
+  color: #fff;
+  font-weight: 700;
+  font-size: 13px;
+
+  box-shadow: 0 10px 22px rgba(30, 79, 115, 0.22);
+  transition: transform 120ms ease, background 160ms ease, box-shadow 160ms ease;
+}
+
+.sw-cta:hover {
+  background: var(--sw-blue-2);
+  transform: translateY(-1px);
+  box-shadow: 0 14px 26px rgba(30, 79, 115, 0.26);
+}
+
+.sw-cta:active {
+  transform: translateY(0);
+}
+
+.sw-cta:focus-visible {
+  outline: 3px solid rgba(30, 79, 115, 0.35);
+  outline-offset: 3px;
+}
+
+.sw-cta-ic {
+  font-size: 14px;
+  line-height: 1;
+}
+
+/* ===== MOBILE ===== */
+.sw-m-row {
+  height: 82px;
+  padding: 0 16px;
+
+  display: grid;
+  grid-template-columns: 48px 1fr 48px;
+  align-items: center;
+  gap: 10px;
+}
+
+.sw-burger {
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  border: 1px solid rgba(0, 0, 0, 0.10);
+  background: rgba(255, 255, 255, 0.92);
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  flex-direction: column;
+}
+
+.sw-burger span {
+  width: 18px;
+  height: 2px;
+  background: rgba(0, 0, 0, 0.75);
+  border-radius: 2px;
+}
+
+.sw-m-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+.sw-logo--mobile {
+  width: 44px;
+  height: 44px;
+}
+
+.sw-brand--mobile {
+  margin-top: 5px;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+}
+
+/* CTA mobile: solo icono para ahorrar espacio */
+.sw-cta--mobile {
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  justify-content: center;
+  border-radius: 14px;
+}
+
+/* menú móvil */
+.sw-mobile-menu {
+  display: none;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 16px 14px;
+}
+
+.sw-mobile-menu.open {
+  display: block;
+}
+
+.sw-mobile-link {
+  width: 100%;
+  text-align: left;
+
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: rgba(255, 255, 255, 0.92);
+  padding: 12px 14px;
+  border-radius: 14px;
+
+  cursor: pointer;
+  color: rgba(0, 0, 0, 0.80);
+  font-size: 14px;
+  font-weight: 600;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  transition: transform 120ms ease, background 160ms ease, border-color 160ms ease;
+}
+
+.sw-mobile-link:hover {
+  background: rgba(30, 79, 115, 0.06);
+  border-color: rgba(30, 79, 115, 0.14);
+  transform: translateY(-1px);
+}
+
+.sw-mobile-link + .sw-mobile-link {
+  margin-top: 8px;
+}
+
+.sw-mobile-link--cta {
+  background: rgba(30, 79, 115, 0.10);
+  border-color: rgba(30, 79, 115, 0.18);
+}

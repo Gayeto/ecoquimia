@@ -1,0 +1,10 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+  functions = "netlify/functions"
+
+# ✅ Para SPA (React Router / anchors / refresh sin 404)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

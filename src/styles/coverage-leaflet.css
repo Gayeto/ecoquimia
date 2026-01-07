@@ -1,0 +1,137 @@
+.covL-section {
+  padding: 56px 0 0;
+  background: linear-gradient(180deg, #ffffff 0%, #f6fbff 45%, #ffffff 100%);
+}
+
+.covL-header {
+  max-width: 1200px;
+  margin: 0 auto 18px;
+  padding: 0 24px;
+  text-align: center;
+}
+
+.covL-kicker {
+  display: inline-flex;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(161, 201, 232, 0.35);
+  border: 1px solid rgba(84, 158, 214, 0.2);
+  color: rgba(10, 40, 70, 0.75);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+.covL-title {
+  margin: 14px 0 8px;
+  font-size: clamp(28px, 3.6vw, 54px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: rgba(10, 30, 55, 0.92);
+  font-weight: 900;
+}
+
+.covL-subtitle {
+  margin: 0 auto;
+  max-width: 760px;
+  color: rgba(10, 30, 55, 0.62);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* ✅ full width real */
+.covL-bleed {
+  width: 100%;
+  padding: 0;
+}
+
+/* ✅ hero map container */
+.covL-mapWrap {
+  width: 100%;
+  border-radius: 0;           /* hero: sin card */
+  overflow: hidden;
+  border: 0;
+  box-shadow: none;
+  background: #fff;
+}
+
+/* ✅ más alto, tipo hero */
+.covL-map {
+  width: 100%;
+  height: clamp(520px, 72vh, 760px);
+}
+
+/* Leaflet base */
+.leaflet-container {
+  background: #eaf2ff;
+  font-family: inherit;
+}
+
+/* Quitar cajita blanca del div icon */
+.leaflet-div-icon {
+  background: transparent !important;
+  border: 0 !important;
+}
+
+/* =========================
+   Pulse markers (rojo) BIG
+   ========================= */
+.cov-pulse {
+  width: 44px;
+  height: 44px;
+  position: relative;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  transform: translateZ(0);
+  animation: covBlinkPulse 1.7s ease-in-out infinite;
+}
+
+.cov-pulse::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: rgba(255, 0, 0, 0.18);
+  box-shadow:
+    0 0 0 16px rgba(255, 0, 0, 0.10),
+    0 24px 60px rgba(0, 0, 0, 0.22);
+  transform: scale(1);
+  animation: covPulseGlow 1.7s ease-in-out infinite;
+}
+
+.cov-pulseCore {
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  background: #ff0000;
+  box-shadow:
+    0 0 0 9px rgba(255, 0, 0, 0.22),
+    0 0 0 1px rgba(255, 255, 255, 0.55) inset;
+}
+
+/* Apaga / prende */
+@keyframes covBlinkPulse {
+  0%   { transform: scale(0.92); opacity: 0.28; }
+  35%  { transform: scale(1.00); opacity: 1; }
+  70%  { transform: scale(0.92); opacity: 0.62; }
+  100% { transform: scale(0.92); opacity: 0.28; }
+}
+
+@keyframes covPulseGlow {
+  0%   { transform: scale(0.95); opacity: 0.55; }
+  60%  { transform: scale(1.65); opacity: 0.16; }
+  100% { transform: scale(0.95); opacity: 0.55; }
+}
+
+/* Popups más suaves */
+.leaflet-popup-content-wrapper {
+  border-radius: 14px;
+}
+
+/* Responsive: header padding */
+@media (max-width: 900px) {
+  .covL-section { padding-top: 44px; }
+  .covL-map { height: clamp(420px, 64vh, 640px); }
+}

@@ -1,0 +1,30 @@
+.hero-btn {
+  border-radius: 999px;
+  padding: 12px 22px;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background 160ms ease, color 160ms ease, border-color 160ms ease,
+    transform 120ms ease, opacity 160ms ease;
+}
+
+.hero-btn--outline {
+  background: transparent;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.85);
+}
+
+.hero-btn--outline:hover {
+  background: #fff;
+  color: #111;
+  border-color: #fff;
+  transform: translateY(-1px);
+}
+
+.hero-btn--outline:active {
+  transform: translateY(0);
+}
+
+.hero-btn--outline:focus-visible {
+  outline: 3px solid rgba(255, 255, 255, 0.35);
+  outline-offset: 3px;
+}

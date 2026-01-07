@@ -1,0 +1,105 @@
+/* src/styles/periodic-header.css */
+
+.perH-wrap {
+  width: 100%;
+}
+
+.perH-header {
+  max-width: 1200px;
+  margin: 0 auto 18px;
+  padding: 0 24px;
+  text-align: center;
+}
+
+/* 🔥 Igual que Cobertura */
+.perH-kicker {
+  display: inline-flex;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(161, 201, 232, 0.35);
+  border: 1px solid rgba(84, 158, 214, 0.2);
+  color: rgba(10, 40, 70, 0.75);
+  font-weight: 700;              /* ✅ negritas como cobertura */
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+.perH-title {
+  margin: 14px 0 8px;
+  font-size: clamp(28px, 3.6vw, 54px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: rgba(10, 30, 55, 0.92);
+  font-weight: 900;              /* ✅ igual que cobertura */
+}
+
+.perH-subtitle {
+  margin: 0 auto;
+  max-width: 760px;
+  color: rgba(10, 30, 55, 0.62);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* Layout: search + tabs */
+.perH-controls {
+  margin-top: 18px;
+  display: grid;
+  gap: 14px;
+  justify-items: center;
+}
+
+/* ✅ Misma searchbar, pero con ancho “bonito” dentro de sección */
+.sw-search--catalog {
+  width: min(560px, 100%);
+  max-width: 560px;
+  min-width: 0;
+}
+
+/* Tabs estilo coherente con tu UI */
+.perH-tabs {
+  width: 100%;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.perH-tab {
+  border: 0;
+  cursor: pointer;
+
+  font-size: 13px;
+  padding: 8px 14px;
+  border-radius: 999px;
+
+  background: rgba(161, 201, 232, 0.40);
+  color: #1e4f73;
+
+  transition: background 160ms ease, color 160ms ease, transform 120ms ease,
+    box-shadow 160ms ease;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.06);
+}
+
+.perH-tab:hover {
+  background: #549ed6;
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.perH-tab:active {
+  transform: translateY(0);
+}
+
+.perH-tab.is-active {
+  background: #549ed6;
+  color: #fff;
+}
+
+/* Responsive */
+@media (min-width: 980px) {
+  .perH-controls {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" version="1.0" width="455.4" height="750.5" xml:space="preserve">
+<style type="text/css"><![CDATA[
+   text {font-family: Helvetica, Arial, sans-serif; font-size: 100px} .small {font-size: 75px}
+]]></style>
+<g transform="translate(50,50)">
+<polygon points="8,357 0,362 0,213 8,218 8,357" />
+<polygon points="128.5,427 128.5,431.5 124.5,434 0,362 8,357 128.5,427" />
+<polygon points="249,357 257,362 132.5,434 128.5,431.5 128.5,427 249,357" />
+<polygon points="249,218 257,213 257,362 249,357 249,218" />
+<polygon points="128.5,148 128.5,143.5 132.5,141 257,213 249,218 128.5,148" />
+<polygon points="8,218 0,213 124.5,141 128.5,143.5 128.5,148 8,218" />
+<polygon points="124.5,0 128.5,0 132.5,0 132.5,141 128.5,143.5 124.5,141 124.5,0" />
+<polygon points="132.5,568 128.5,575 124.5,572.5 124.5,434 128.5,431.5 132.5,434 132.5,568" />
+<polygon points="6,650 4,646.5 2,643.5 124.5,572.5 128.5,575 128.5,579.5 6,650" />
+<polygon points="207.5,524.5 211.5,531.5 136.5,575 128.5,575 132.5,568 207.5,524.5" />
+<polygon points="255,643.5 253,647 251,650.5 128.5,579.5 128.5,575 136.5,575 255,643.5" />
+<rect width="8" height="114.2" x="174" y="144.9" transform="matrix(-0.4962,0.8682,-0.8682,-0.4962,441.7001,147.6878)" />
+<text x="213.5" y="542">OH</text>
+</g>
+</svg>
