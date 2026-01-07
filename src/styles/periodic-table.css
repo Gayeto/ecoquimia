@@ -768,3 +768,31 @@
     display: none !important;
   }
 }
+
+/* =========================
+   OVERRIDES: tamaños texto
+   (pegar al FINAL del archivo)
+   ========================= */
+
+/* Nombres en celdas (modo colores) */
+.pt-name{
+  font-size: clamp(11px, 0.9vw, 13px) !important;
+  line-height: 1.15 !important;
+}
+
+/* Nombres en celdas (modo fotos) */
+.pt-photo-name{
+  font-size: clamp(10px, 0.85vw, 12px) !important;
+  line-height: 1.15 !important;
+}
+
+/* Nombre dentro de la celda grande del panel (abajo del símbolo) */
+.pt-preview-name{
+  font-size: clamp(12px, 1vw, 14px) !important;
+}
+
+/* ✅ Abreviatura/símbolo dentro de la celda grande del panel */
+.pt-preview-sym{
+  font-size: clamp(36px, 3.2vw, 48px) !important;
+  line-height: 1 !important;
+}

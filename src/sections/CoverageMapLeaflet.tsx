@@ -2,7 +2,7 @@ import type { LatLngExpression } from "leaflet";
 import * as L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useEffect, useMemo } from "react";
-import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
+import { MapContainer, Marker, TileLayer, Tooltip, useMap } from "react-leaflet";
 import "../styles/coverage-leaflet.css";
 
 type Pin = { name: string; lat: number; lng: number; note?: string };
@@ -26,9 +26,7 @@ function FitToPins({ pins }: { pins: Pin[] }) {
   useEffect(() => {
     if (!pins.length) return;
 
-    const bounds = L.latLngBounds(
-      pins.map((p) => [p.lat, p.lng] as [number, number])
-    );
+    const bounds = L.latLngBounds(pins.map((p) => [p.lat, p.lng] as [number, number]));
 
     map.fitBounds(bounds, {
       padding: [40, 40],
@@ -69,19 +67,13 @@ export default function CoverageMapLeaflet() {
 
         <h2 className="covL-title">¿Dónde estamos y a dónde llegamos?</h2>
         <p className="covL-subtitle">
-          Operamos desde <b>CDMX</b> y cubrimos la zona centro para entregas y
-          atención.
+          Operamos desde <b>CDMX</b> y cubrimos la zona centro para entregas y atención.
         </p>
       </header>
 
       <div className="covL-bleed">
         <div className="covL-mapWrap">
-          <MapContainer
-            center={center}
-            zoom={6}
-            scrollWheelZoom={false}
-            className="covL-map"
-          >
+          <MapContainer center={center} zoom={6} scrollWheelZoom={false} className="covL-map">
             <TileLayer
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               attribution='&copy; OpenStreetMap contributors'
@@ -94,11 +86,18 @@ export default function CoverageMapLeaflet() {
                 key={p.name}
                 position={[p.lat, p.lng] as LatLngExpression}
                 icon={pulseIcon(i * 200)}
+                riseOnHover
               >
-                <Popup>
-                  <b>{p.name}</b>
-                  {p.note ? <div style={{ marginTop: 4 }}>{p.note}</div> : null}
-                </Popup>
+                {/* ✅ SOLO HOVER (sin popup) */}
+                <Tooltip
+                  direction="top"
+                  offset={[0, -18]}
+                  opacity={1}
+                  className="covL-tooltip"
+                  sticky
+                >
+                  {p.name}
+                </Tooltip>
               </Marker>
             ))}
           </MapContainer>

@@ -9,15 +9,13 @@ type Cell = (typeof CELLS)[number];
 type CategoryDef = {
   key: "all" | string;
   label: string;
-  dot: string;          // color del punto
-  bgSoft: string;       // fondo suave chip
-  border: string;       // borde chip
-  text: string;         // texto chip
-  // bg classes que pertenecen a la categoría (header + items)
+  dot: string;
+  bgSoft: string;
+  border: string;
+  text: string;
   bgs: string[];
 };
 
-// Añadir tipo para el modo de visualización
 type ViewMode = "colors" | "photos";
 
 function normalize(s: string) {
@@ -29,7 +27,8 @@ function normalize(s: string) {
 }
 
 export default function CatalogPeriodic() {
-  // ✅ Define aquí tus categorías (keys = abreviaturas)
+  // ✅ Puedes DEJAR esto si tu grid lo usa para colorear/mapeos internos
+  // (aunque ya no se mostrará en el header)
   const CATEGORIES: CategoryDef[] = useMemo(
     () => [
       {
@@ -41,8 +40,6 @@ export default function CatalogPeriodic() {
         text: "#ffffff",
         bgs: [],
       },
-
-      // AyD
       {
         key: "AyD",
         label: "Ácidos y derivados",
@@ -52,8 +49,6 @@ export default function CatalogPeriodic() {
         text: "rgba(15, 23, 42, 0.92)",
         bgs: ["bg-[#8FC3FA]", "bg-[#BBDAFC]"],
       },
-
-      // AySA
       {
         key: "AySA",
         label: "Alcoholes y soluciones alcohólicas",
@@ -63,8 +58,6 @@ export default function CatalogPeriodic() {
         text: "rgba(15, 23, 42, 0.92)",
         bgs: ["bg-[#6FCA63]", "bg-[#8FD585]"],
       },
-
-      // SyCS
       {
         key: "SyCS",
         label: "Sales y compuestos de sodio",
@@ -74,8 +67,6 @@ export default function CatalogPeriodic() {
         text: "rgba(15, 23, 42, 0.92)",
         bgs: ["bg-[#F3D839]", "bg-[#F9E990]"],
       },
-
-      // TyS
       {
         key: "TyS",
         label: "Tensioactivos y surfactantes",
@@ -85,8 +76,6 @@ export default function CatalogPeriodic() {
         text: "rgba(15, 23, 42, 0.92)",
         bgs: ["bg-[#FA9B52]", "bg-[#FBBD8D]"],
       },
-
-      // SyD
       {
         key: "SyD",
         label: "Solventes y disolventes",
@@ -96,8 +85,6 @@ export default function CatalogPeriodic() {
         text: "rgba(15, 23, 42, 0.92)",
         bgs: ["bg-[#D09DF2]", "bg-[#E1C0F7]"],
       },
-
-      // PQPT
       {
         key: "PQPT",
         label: "Productos químicos para textiles",
@@ -107,8 +94,6 @@ export default function CatalogPeriodic() {
         text: "rgba(15, 23, 42, 0.92)",
         bgs: ["bg-[#72DFF7]", "bg-[#90E5F9]"],
       },
-
-      // MPPDyL
       {
         key: "MPPDyL",
         label: "Materia prima para detergentes y limpiadores",
@@ -118,8 +103,6 @@ export default function CatalogPeriodic() {
         text: "rgba(15, 23, 42, 0.92)",
         bgs: ["bg-[#CDA58E]", "bg-[#DBBEAD]"],
       },
-
-      // PPC
       {
         key: "PPC",
         label: "Productos para construcción",
@@ -129,8 +112,6 @@ export default function CatalogPeriodic() {
         text: "rgba(15, 23, 42, 0.92)",
         bgs: ["bg-[#AFACAC]", "bg-[#C6C3C3]"],
       },
-
-      // AByD
       {
         key: "AByD",
         label: "Agentes blanqueadores y desinfectantes",
@@ -140,8 +121,6 @@ export default function CatalogPeriodic() {
         text: "rgba(15, 23, 42, 0.92)",
         bgs: ["bg-[#E7A2DA]", "bg-[#F0C6E9]"],
       },
-
-      // OQI
       {
         key: "OQI",
         label: "Otros químicos industriales",
@@ -151,8 +130,6 @@ export default function CatalogPeriodic() {
         text: "rgba(15, 23, 42, 0.92)",
         bgs: ["bg-[#8EACCD]", "bg-[#ADC4DB]"],
       },
-
-      // ByA
       {
         key: "ByA",
         label: "Bases y álcalis",
@@ -162,19 +139,15 @@ export default function CatalogPeriodic() {
         text: "rgba(15, 23, 42, 0.92)",
         bgs: ["bg-[#65ABF6]", "bg-[#90C3F9]"],
       },
-
-      // EAA
       {
         key: "EAA",
         label: "Edulcorantes y aditivos alimentarios",
-        dot: "#B2EA437",
+        dot: "#B2EA43",
         bgSoft: "rgba(69, 156, 7, 0.14)",
         border: "rgba(69, 156, 7, 0.55)",
         text: "rgba(15, 23, 42, 0.92)",
         bgs: ["bg-[#B2EA43]", "bg-[#C3EF6C]"],
       },
-
-      // PA
       {
         key: "PyA",
         label: "Preservantes y aditivos",
@@ -184,8 +157,6 @@ export default function CatalogPeriodic() {
         text: "rgba(15, 23, 42, 0.92)",
         bgs: ["bg-[#F5275B]", "bg-[#F86388]"],
       },
-
-      // PNE
       {
         key: "PNE",
         label: "Productos naturales y extractos",
@@ -199,18 +170,19 @@ export default function CatalogPeriodic() {
     []
   );
 
-  const [activeCat, setActiveCat] = useState<string>("all");
+  // ✅ Ya NO hay categoría activa (se queda fijo en "all")
+  const activeCat = "all";
+
   const [query, setQuery] = useState("");
   const [focusedKey, setFocusedKey] = useState<string | null>(null);
-  // Añadir estado para el modo de visualización
   const [viewMode, setViewMode] = useState<ViewMode>("colors");
 
+  // Esto lo puedes conservar para que en el buscador NO salgan celdas “header” de categoría
   const categoryKeys = useMemo(
     () => new Set(CATEGORIES.filter((c) => c.key !== "all").map((c) => c.key)),
     [CATEGORIES]
   );
 
-  // Productos (no headers de categoría)
   const productCells = useMemo(() => {
     return CELLS.filter((c) => c.bg !== "bg-transparent").filter((c) => {
       const key = String((c as any).symbol ?? c.n);
@@ -231,7 +203,6 @@ export default function CatalogPeriodic() {
         const hay = normalize(`${sym} ${name} ${meta}`);
         if (!hay.includes(q)) return null;
 
-        // score simple: prioriza match en símbolo y al inicio
         let score = 0;
         const ns = normalize(sym);
         const nn = normalize(name);
@@ -243,23 +214,21 @@ export default function CatalogPeriodic() {
 
         return { cell: c, sym, name, meta, score };
       })
-      .filter(Boolean) as Array<{ cell: Cell; sym: string; name: string; meta: string; score: number }>;
+      .filter(Boolean) as Array<{
+      cell: Cell;
+      sym: string;
+      name: string;
+      meta: string;
+      score: number;
+    }>;
 
     scored.sort((a, b) => b.score - a.score);
     return scored.slice(0, 7);
   }, [query, productCells]);
 
-  const setCategory = (key: string) => {
-    setActiveCat(key);
-    setFocusedKey(null);     // ✅ ya no hay foco de búsqueda
-    // opcional: mantener lo escrito o limpiarlo
-    // setQuery("");
-  };
-
   const focusCell = (cell: Cell, forceQuery?: string) => {
     const k = `${cell.row}-${cell.col}-${String(cell.n)}`;
     setFocusedKey(k);
-    setActiveCat("all"); // ✅ al buscar, NO queda categoría activa
     if (typeof forceQuery === "string") setQuery(forceQuery);
   };
 
@@ -273,13 +242,14 @@ export default function CatalogPeriodic() {
   return (
     <section id="catalogo" className="cat-section">
       <PeriodicHeader
-        categories={CATEGORIES}
+        // ✅ IMPORTANTÍSIMO: esto “mata” la UI de categorías (si tu header las pinta a partir del array)
+        categories={[] as CategoryDef[]}
         activeKey={activeCat}
-        onSelectCategory={setCategory}
+        onSelectCategory={() => {}}
         query={query}
         onQueryChange={(v) => {
           setQuery(v);
-          setFocusedKey(null); // ✅ mientras escribe, no "amarra" un foco viejo
+          setFocusedKey(null);
         }}
         suggestions={suggestions.map((s) => ({
           label: s.name || s.sym,
@@ -293,14 +263,19 @@ export default function CatalogPeriodic() {
       <div className="cat-view-mode-wrapper">
         <div className="cat-view-mode-buttons">
           <button
-            className={`cat-view-mode-btn ${viewMode === "colors" ? "cat-view-mode-btn-active" : ""}`}
+            className={`cat-view-mode-btn ${
+              viewMode === "colors" ? "cat-view-mode-btn-active" : ""
+            }`}
             onClick={() => setViewMode("colors")}
           >
             <span className="cat-view-mode-icon">🎨</span>
             <span>Colores</span>
           </button>
+
           <button
-            className={`cat-view-mode-btn ${viewMode === "photos" ? "cat-view-mode-btn-active" : ""}`}
+            className={`cat-view-mode-btn ${
+              viewMode === "photos" ? "cat-view-mode-btn-active" : ""
+            }`}
             onClick={() => setViewMode("photos")}
           >
             <span className="cat-view-mode-icon">📷</span>
@@ -310,10 +285,10 @@ export default function CatalogPeriodic() {
       </div>
 
       <PeriodicTableGrid
-        activeCategoryKey={activeCat}
+        activeCategoryKey={activeCat} // ✅ fijo en "all"
         focusedCellKey={focusedKey}
-        categories={CATEGORIES}
-        viewMode={viewMode} // Pasar el modo de visualización
+        categories={CATEGORIES} // ✅ se mantiene para que el grid tenga el mapeo de colores si lo usa
+        viewMode={viewMode}
       />
     </section>
   );
