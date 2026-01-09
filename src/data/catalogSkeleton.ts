@@ -288,7 +288,7 @@ export const CELLS: Cell[] = [
     text: "text-black",
     symbol: "SLS",
     name: "Laurilsulfato de sodio",
-    meta: "13%",
+    meta: " LESS 28%",
     uso: "Surfactante espumante en limpiadores.",
     estructura: "C12H25NaO4S",
       img: "/images/laur.png",

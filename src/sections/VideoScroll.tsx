@@ -1,125 +1,118 @@
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useMemo, useRef } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { useMemo, useState } from "react";
 import { VIDEO_CLIPS } from "../data/videos";
-import { useIsMobile } from "../utils/useIsMobile";
 
-const LOGO_SRC = "/images/logo.png"; // Asegúrate de que esta ruta sea correcta
+const LOGO_SRC = "/images/logo.png";
 
-export default function VideoScroll() {
-  const isMobile = useIsMobile(900);
-  const sectionRef = useRef<HTMLElement>(null);
+/**
+ * ✅ Ajusta aquí el “close-up”:
+ * - 1.00 = se ve completo (más barras)
+ * - 1.05 = balance pro (menos barras, casi nada de recorte)
+ * - 1.10+ = más grande (puede empezar a recortar un poco)
+ */
+const CONTAIN_SCALE = "scale-[1.09]";
 
-  // Controlamos el scroll de toda la sección
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start start", "end end"],
-  });
+export default function VideoAutoPlay() {
+  const [currentIndex, setCurrentIndex] = useState(0);
 
-  const clips = useMemo(() => VIDEO_CLIPS, []);
+  const clip = useMemo(() => VIDEO_CLIPS[currentIndex], [currentIndex]);
 
-  // --- 1. ANIMACIÓN DEL LOGO INICIAL ---
-  // El logo se desvanece y sube ligeramente al empezar el scroll
-  const logoOpacity = useTransform(scrollYProgress, [0, 0.05], [1, 0]);
-  const logoScale = useTransform(scrollYProgress, [0, 0.05], [1, 0.95]);
-  const logoY = useTransform(scrollYProgress, [0, 0.05], [0, -20]);
-
-  // --- 2. LÓGICA DE VIDEOS FULL SCREEN ---
-  // Función para crear la transición de cada video (Entrada -> Visible -> Salida)
-  const createVideoStyle = (start: number, end: number) => {
-    const fadeInEnd = start + 0.05;
-    const fadeOutStart = end - 0.05;
-
-    return {
-      opacity: useTransform(
-        scrollYProgress,
-        [start, fadeInEnd, fadeOutStart, end],
-        [0, 1, 1, 0]
-      ),
-      scale: useTransform(
-        scrollYProgress,
-        [start, fadeInEnd],
-        [1.1, 1] // Ligero zoom out al entrar para efecto cinematográfico
-      ),
-    };
+  const handleVideoEnd = () => {
+    setCurrentIndex((prev) => (prev + 1) % VIDEO_CLIPS.length);
   };
-
-  // Dividimos el scroll (del 0.05 al 1.0) entre los clips disponibles
-  const v1 = createVideoStyle(0.05, 0.30);
-  const v2 = createVideoStyle(0.30, 0.55);
-  const v3 = createVideoStyle(0.55, 0.80);
-  const v4 = createVideoStyle(0.80, 1.0);
-
-  // Sub-componente para el video en pantalla completa
-  const FullScreenVideo = ({ src, motionStyle }: { src: string; motionStyle: any }) => (
-    <motion.div
-      style={motionStyle}
-      className="absolute inset-0 h-screen w-screen overflow-hidden bg-black"
-    >
-      <video
-        className="h-full w-full object-cover"
-        src={src}
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="auto"
-      />
-    </motion.div>
-  );
 
   return (
     <section
       id="videos"
-      ref={sectionRef}
-      className="relative bg-white"
+      className="relative h-screen w-full overflow-hidden bg-black"
+      style={{ marginTop: 0, paddingTop: 0 }}
     >
-      {/* h-[500vh] da suficiente espacio para que el scroll no sea demasiado rápido */}
-      <div className={`relative ${isMobile ? "h-[400vh]" : "h-[500vh]"}`}>
-
-        <div className="sticky top-0 h-screen w-full overflow-hidden">
-
-          {/* --- CAPA 1: PANTALLA DE BIENVENIDA (Logo arriba) --- */}
-          <motion.div
-            style={{ opacity: logoOpacity, scale: logoScale, y: logoY }}
-            className={[
-              "absolute inset-0 z-50 flex flex-col items-center bg-white px-4",
-              "pt-20 md:pt-28" // Controla qué tan cerca de la navbar está el logo
-            ].join(" ")}
-          >
-            <img
-              src={LOGO_SRC}
-              alt="Ecoquimia"
-              className="w-[280px] sm:w-[380px] md:w-[500px] h-auto drop-shadow-sm"
-              draggable={false}
-            />
-
+      {/* ✅ margen lateral pequeño */}
+      <div className="absolute inset-0 px-3 md:px-6">
+        <div className="relative h-full w-full overflow-hidden rounded-[18px] md:rounded-[22px]">
+          {/* --- VIDEO + TRANSICIÓN --- */}
+          <AnimatePresence mode="wait">
             <motion.div
-              className="mt-12 flex flex-col items-center"
+              key={currentIndex}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.9, ease: "easeInOut" }}
+              className="absolute inset-0"
             >
-              <motion.p
-                className="text-sm md:text-base text-black/40 font-light tracking-widest"
-                animate={{ y: [0, 10, 0] }}
-                transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-              >
-                Desliza para explorar ↓
-              </motion.p>
-            </motion.div>
-          </motion.div>
+              {/* ✅ Fondo blur usando poster (para que las barras NO se vean negras) */}
+              {clip?.poster ? (
+                <img
+                  src={clip.poster}
+                  alt=""
+                  className="absolute inset-0 h-full w-full object-cover blur-2xl scale-110 opacity-45"
+                  draggable={false}
+                />
+              ) : (
+                <div className="absolute inset-0 bg-black" />
+              )}
 
-          {/* --- CAPA 2: VIDEOS EN FULL SCREEN --- */}
-          <div className="relative z-40 h-full w-full">
-            {clips[0] && <FullScreenVideo src={clips[0].src} motionStyle={v1} />}
-            {clips[1] && <FullScreenVideo src={clips[1].src} motionStyle={v2} />}
-            {clips[2] && <FullScreenVideo src={clips[2].src} motionStyle={v3} />}
-            {clips[3] && <FullScreenVideo src={clips[3].src} motionStyle={v4} />}
+              {/* ✅ Video con menos “barras” pero sin close-up agresivo */}
+              <video
+                src={clip?.src}
+                autoPlay
+                muted
+                playsInline
+                preload="metadata"
+                onEnded={handleVideoEnd}
+                className={[
+                  "relative z-10 h-full w-full object-contain",
+                  CONTAIN_SCALE, // 👈 ajusta aquí
+                ].join(" ")}
+              />
+
+              {/* Overlay sutil tipo cine */}
+              <div className="pointer-events-none absolute inset-0 z-20 bg-gradient-to-t from-black/45 via-black/15 to-black/25" />
+              <div className="pointer-events-none absolute inset-0 z-20 shadow-[inset_0_0_140px_rgba(0,0,0,0.55)]" />
+            </motion.div>
+          </AnimatePresence>
+
+          {/* --- LOGO CENTRADO --- */}
+          <div className="pointer-events-none absolute inset-0 z-30 flex items-center justify-center">
+            <motion.img
+              key="main-logo"
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.9, ease: "easeOut" }}
+              src={LOGO_SRC}
+              alt="Ecoquimia"
+              className={[
+                "select-none",
+                "w-[260px] sm:w-[380px] md:w-[480px]",
+                "max-w-[82vw] h-auto",
+                "drop-shadow-[0_18px_60px_rgba(0,0,0,0.55)]",
+              ].join(" ")}
+              draggable={false}
+            />
           </div>
 
-          {/* Overlay sutil para mejorar la visibilidad si decides poner texto encima */}
-          <div className="pointer-events-none absolute inset-0 z-45 bg-black/10" />
-
+          {/* --- INDICADORES PRO --- */}
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-40">
+            <div className="flex items-center gap-2 rounded-full border border-white/15 bg-black/25 px-3 py-2 backdrop-blur-md">
+              {VIDEO_CLIPS.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setCurrentIndex(idx)}
+                  className="group h-4 w-4 grid place-items-center focus:outline-none"
+                  aria-label={`Ir al video ${idx + 1}`}
+                >
+                  <motion.span
+                    animate={{
+                      width: idx === currentIndex ? 22 : 8,
+                      opacity: idx === currentIndex ? 1 : 0.55,
+                    }}
+                    transition={{ duration: 0.05 }}
+                    className="block h-[6px] rounded-full bg-white group-hover:opacity-80"
+                  />
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </section>

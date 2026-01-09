@@ -28,3 +28,9 @@
   outline: 3px solid rgba(255, 255, 255, 0.35);
   outline-offset: 3px;
 }
+
+/* Aplica el offset del navbar a todo EXCEPTO la sección de videos */
+main > section:not(#videos) {
+  scroll-margin-top: 72px;
+  padding-top: 72px;
+}

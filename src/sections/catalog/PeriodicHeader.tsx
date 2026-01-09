@@ -51,9 +51,9 @@ export default function PeriodicHeader({
   <span>Catálogo</span>
 </p>
 
-      <h2 className="cat-title">Tabla periódica de productos</h2>
+      <h2 className="cat-title">Nuestros Productos</h2>
       <p className="cat-subtitle">
-        Filtra por categoría o busca un producto. Al buscar, se enfocará{" "}
+        Busca un producto. Al buscar, se enfocará{" "}
         <b>solo el producto</b> encontrado.
       </p>
 

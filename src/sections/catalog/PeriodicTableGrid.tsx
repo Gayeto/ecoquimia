@@ -52,6 +52,9 @@ export default function PeriodicTableGrid({
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const [wrapWidth, setWrapWidth] = useState<number>(1200);
 
+  // ✅ Presentación default (si luego quieres por producto, lo metes en data)
+  const DEFAULT_PRESENTACION = "1Lt, 4Lts, 10Lts, 20Lts, 50Lts, 200Lts";
+
   const realCells = useMemo(
     () => CELLS.filter((c) => c.bg !== "bg-transparent"),
     []
@@ -206,19 +209,19 @@ export default function PeriodicTableGrid({
                     height: panelH,
                   }}
                 >
-                  {/* Celda Grande: Cambia entre cellImg (Fotos) y bg color (Colores) */}
+                  {/* Celda Grande */}
                   <div
                     className={`pt-preview-box ${activeCellForPanel.bg}`}
                     style={{
-                      backgroundImage: viewMode === "photos" && (activeCellForPanel as any).cellImg
-                        ? `url(${(activeCellForPanel as any).cellImg})`
-                        : "none",
+                      backgroundImage:
+                        viewMode === "photos" && (activeCellForPanel as any).cellImg
+                          ? `url(${(activeCellForPanel as any).cellImg})`
+                          : "none",
                       backgroundSize: "cover",
                       backgroundPosition: "center",
-                      position: "relative"
+                      position: "relative",
                     }}
                   >
-                    {/* Overlay para legibilidad en modo fotos */}
                     {viewMode === "photos" && (activeCellForPanel as any).cellImg && (
                       <div className="absolute inset-0 bg-black/20 z-0" />
                     )}
@@ -260,9 +263,19 @@ export default function PeriodicTableGrid({
                       {(activeCellForPanel as any).estructura && (
                         <div className="pt-kv">
                           <span className="pt-k font-bold">Estructura: </span>
-                          <span className="pt-v">{renderSubscripts(String((activeCellForPanel as any).estructura))}</span>
+                          <span className="pt-v">
+                            {renderSubscripts(String((activeCellForPanel as any).estructura))}
+                          </span>
                         </div>
                       )}
+
+                      {/* ✅ NUEVO: Presentación (aparece cuando la card aparece por hover) */}
+                      <div className="pt-kv">
+                        <span className="pt-k font-bold">Presentación: </span>
+                        <span className="pt-v">
+                          {(activeCellForPanel as any).presentacion || DEFAULT_PRESENTACION}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </motion.div>
@@ -275,8 +288,10 @@ export default function PeriodicTableGrid({
               const cellKey = `${cell.row}-${cell.col}-${String(cell.n)}`;
               const cat = categories.find((c) => c.key === activeCategoryKey);
 
-              const isCategoryMatch = activeCategoryKey !== "all" &&
+              const isCategoryMatch =
+                activeCategoryKey !== "all" &&
                 (cat?.bgs.includes(cell.bg) || String((cell as any).symbol ?? cell.n) === activeCategoryKey);
+
               const isFocused = focusedCellKey === cellKey;
               const isHighlight = isFocused || isCategoryMatch;
               const isDimmed = (focusedCellKey || activeCategoryKey !== "all") && !isHighlight;
@@ -285,24 +300,32 @@ export default function PeriodicTableGrid({
               const hasImage = viewMode === "photos" && cellImageUrl;
               const isCategoryCell = !(cell as any).name && (cell as any).symbol;
 
+              const meta = (cell as any).meta as string | undefined;
+
               return (
                 <motion.div
                   key={cellKey}
                   onMouseEnter={() => (cell as any).name && setHoveredCell(cell)}
                   onMouseLeave={() => setHoveredCell(null)}
-                  className={`pt-cell ${viewMode === "photos" ? "pt-cell-photo-mode" : cell.bg} ${cornerClassFor(internalIdx)} ${isDimmed ? "is-dimmed" : ""} ${isHighlight ? "is-highlight" : ""} ${viewMode === "photos" && isHighlight ? "pt-photo-highlight" : ""}`}
+                  className={`pt-cell ${viewMode === "photos" ? "pt-cell-photo-mode" : cell.bg} ${cornerClassFor(internalIdx)} ${
+                    isDimmed ? "is-dimmed" : ""
+                  } ${isHighlight ? "is-highlight" : ""} ${viewMode === "photos" && isHighlight ? "pt-photo-highlight" : ""}`}
                   style={{
                     left: idxWidth + (cell.col - 2) * cellSize,
                     top: idxHeight + (cell.row - 2) * cellSize,
                     width: (cell.span ?? 1) * cellSize,
                     height: (cell.h ?? 1) * cellSize,
-                    ...(hasImage ? {
-                      backgroundImage: `url(${cellImageUrl})`,
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                    } : viewMode === "photos" && !isCategoryCell ? {
-                      backgroundColor: getFallbackColor(cell.bg),
-                    } : {}),
+                    ...(hasImage
+                      ? {
+                          backgroundImage: `url(${cellImageUrl})`,
+                          backgroundSize: "cover",
+                          backgroundPosition: "center",
+                        }
+                      : viewMode === "photos" && !isCategoryCell
+                      ? {
+                          backgroundColor: getFallbackColor(cell.bg),
+                        }
+                      : {}),
                   }}
                 >
                   {viewMode === "colors" && <div className="pt-internal-index">{internalIdx}</div>}
@@ -310,22 +333,36 @@ export default function PeriodicTableGrid({
                   <div className="pt-content">
                     {viewMode === "colors" ? (
                       <>
-                        <div className="pt-symbol">{renderSubscripts(String((cell as any).symbol ?? cell.n))}</div>
+                        <div className="pt-symbol">
+                          {renderSubscripts(String((cell as any).symbol ?? cell.n))}
+                        </div>
+
                         {(cell as any).name && <div className="pt-name">{(cell as any).name}</div>}
+
+                        {/* ✅ META de vuelta */}
+                        {meta && (cell as any).name && <div className="pt-meta">{meta}</div>}
                       </>
                     ) : (
                       <div className="pt-photo-content">
                         {hasImage ? (
                           <div className="pt-photo-overlay">
-                            <div className="pt-photo-symbol">{renderSubscripts(String((cell as any).symbol ?? cell.n))}</div>
+                            <div className="pt-photo-symbol">
+                              {renderSubscripts(String((cell as any).symbol ?? cell.n))}
+                            </div>
                             {(cell as any).name && <div className="pt-photo-name">{(cell as any).name}</div>}
+
+                            {/* ✅ META también en modo fotos */}
+                            {meta && (cell as any).name && <div className="pt-photo-meta">{meta}</div>}
                           </div>
                         ) : (
                           <>
-                            <div className={`pt-symbol ${isCategoryCell ? '' : 'pt-photo-fallback-symbol'}`}>
+                            <div className={`pt-symbol ${isCategoryCell ? "" : "pt-photo-fallback-symbol"}`}>
                               {renderSubscripts(String((cell as any).symbol ?? cell.n))}
                             </div>
                             {(cell as any).name && <div className="pt-name">{(cell as any).name}</div>}
+
+                            {/* ✅ META en fallback */}
+                            {meta && (cell as any).name && <div className="pt-meta">{meta}</div>}
                           </>
                         )}
                       </div>
