@@ -1,4 +1,4 @@
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 
 type Payload = {
   empresa: string;
@@ -17,27 +17,12 @@ const esc = (s: string) =>
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
 
-export default async function handler(req: Request): Promise<Response> {
-  if (req.method !== "POST") {
-    return new Response("Method Not Allowed", { status: 405 });
-  }
+export default async function handler(req: any, res: any) {
+  if (req.method !== "POST") return res.status(405).send("Method Not Allowed");
 
-  let data: Payload;
-  try {
-    data = (await req.json()) as Payload;
-  } catch {
-    return new Response(JSON.stringify({ error: "JSON inválido." }), {
-      status: 400,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
+  const data = (req.body || {}) as Partial<Payload>;
 
-  if (data["bot-field"]) {
-    return new Response(JSON.stringify({ ok: true }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
+  if (data["bot-field"]) return res.status(200).json({ ok: true });
 
   const required: (keyof Payload)[] = [
     "empresa",
@@ -48,36 +33,14 @@ export default async function handler(req: Request): Promise<Response> {
   ];
 
   for (const k of required) {
-    const v = String(data[k] ?? "").trim();
-    if (!v) {
-      return new Response(JSON.stringify({ error: `Falta campo: ${k}` }), {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
+    const v = String((data as any)[k] ?? "").trim();
+    if (!v) return res.status(400).json({ error: `Falta campo: ${k}` });
   }
 
-  const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, TO_EMAIL, FROM_NAME } =
-    process.env;
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) return res.status(500).json({ error: "Falta RESEND_API_KEY." });
 
-  if (!SMTP_HOST || !SMTP_USER || !SMTP_PASS) {
-    return new Response(
-      JSON.stringify({
-        error: "Faltan variables SMTP (SMTP_HOST/SMTP_USER/SMTP_PASS).",
-      }),
-      { status: 500, headers: { "Content-Type": "application/json" } },
-    );
-  }
-
-  const port = Number(SMTP_PORT || 465);
-  const secure = port === 465;
-
-  const transporter = nodemailer.createTransport({
-    host: SMTP_HOST,
-    port,
-    secure,
-    auth: { user: SMTP_USER, pass: SMTP_PASS },
-  });
+  const resend = new Resend(apiKey);
 
   const subject = `EcoQuimia — Nueva solicitud (${data.empresa})`;
 
@@ -104,26 +67,22 @@ export default async function handler(req: Request): Promise<Response> {
   `;
 
   try {
-    await transporter.sendMail({
-      from: `"${FROM_NAME || "EcoQuimia"}" <${SMTP_USER}>`,
-      to: TO_EMAIL || "handrade1404@gmail.com",
-      replyTo: data.correo,
+    await resend.emails.send({
+      // Para pruebas puedes usar onboarding@resend.dev
+      // Para producción, lo ideal es un from de tu dominio verificado (ej: contacto@ecoquimia.com)
+      from: process.env.FROM_EMAIL || "EcoQuimia <onboarding@resend.dev>",
+      to: [process.env.TO_EMAIL || "hector.andrade@ecoquimia.com"],
+      replyTo: String(data.correo),
       subject,
       text,
       html,
     });
 
-    return new Response(JSON.stringify({ ok: true }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
+    return res.status(200).json({ ok: true });
   } catch (e: any) {
-    return new Response(
-      JSON.stringify({
-        error: "No se pudo enviar el correo.",
-        detail: e?.message,
-      }),
-      { status: 500, headers: { "Content-Type": "application/json" } },
-    );
+    return res.status(500).json({
+      error: "No se pudo enviar el correo.",
+      detail: e?.message,
+    });
   }
 }
