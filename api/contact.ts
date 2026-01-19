@@ -1,5 +1,3 @@
-// netlify/functions/contact.ts
-import type { Handler } from "@netlify/functions";
 import nodemailer from "nodemailer";
 
 type Payload = {
@@ -8,7 +6,6 @@ type Payload = {
   correo: string;
   telefono: string;
   material: string;
-  // honeypot opcional:
   "bot-field"?: string;
 };
 
@@ -20,24 +17,26 @@ const esc = (s: string) =>
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
 
-export const handler: Handler = async (event) => {
-  if (event.httpMethod !== "POST") {
-    return { statusCode: 405, body: "Method Not Allowed" };
+export default async function handler(req: Request): Promise<Response> {
+  if (req.method !== "POST") {
+    return new Response("Method Not Allowed", { status: 405 });
   }
 
   let data: Payload;
   try {
-    data = JSON.parse(event.body || "{}");
+    data = (await req.json()) as Payload;
   } catch {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ error: "JSON inválido." }),
-    };
+    return new Response(JSON.stringify({ error: "JSON inválido." }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 
-  // Honeypot (si algún bot lo llena, fingimos OK y no mandamos nada)
   if (data["bot-field"]) {
-    return { statusCode: 200, body: JSON.stringify({ ok: true }) };
+    return new Response(JSON.stringify({ ok: true }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 
   const required: (keyof Payload)[] = [
@@ -47,26 +46,27 @@ export const handler: Handler = async (event) => {
     "telefono",
     "material",
   ];
+
   for (const k of required) {
     const v = String(data[k] ?? "").trim();
-    if (!v)
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ error: `Falta campo: ${k}` }),
-      };
+    if (!v) {
+      return new Response(JSON.stringify({ error: `Falta campo: ${k}` }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
   }
 
   const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, TO_EMAIL, FROM_NAME } =
     process.env;
 
   if (!SMTP_HOST || !SMTP_USER || !SMTP_PASS) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({
-        error:
-          "Faltan variables SMTP en Netlify (SMTP_HOST/SMTP_USER/SMTP_PASS).",
+    return new Response(
+      JSON.stringify({
+        error: "Faltan variables SMTP (SMTP_HOST/SMTP_USER/SMTP_PASS).",
       }),
-    };
+      { status: 500, headers: { "Content-Type": "application/json" } },
+    );
   }
 
   const port = Number(SMTP_PORT || 465);
@@ -107,20 +107,23 @@ export const handler: Handler = async (event) => {
     await transporter.sendMail({
       from: `"${FROM_NAME || "EcoQuimia"}" <${SMTP_USER}>`,
       to: TO_EMAIL || "handrade1404@gmail.com",
-      replyTo: data.correo, // para responder directo al cliente
+      replyTo: data.correo,
       subject,
       text,
       html,
     });
 
-    return { statusCode: 200, body: JSON.stringify({ ok: true }) };
+    return new Response(JSON.stringify({ ok: true }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
   } catch (e: any) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({
+    return new Response(
+      JSON.stringify({
         error: "No se pudo enviar el correo.",
         detail: e?.message,
       }),
-    };
+      { status: 500, headers: { "Content-Type": "application/json" } },
+    );
   }
-};
+}

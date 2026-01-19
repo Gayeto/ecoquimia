@@ -7,6 +7,8 @@ type FormState = {
   correo: string;
   telefono: string;
   material: string;
+  // honeypot opcional
+  "bot-field"?: string;
 };
 
 const initialState: FormState = {
@@ -15,6 +17,7 @@ const initialState: FormState = {
   correo: "",
   telefono: "",
   material: "",
+  "bot-field": "",
 };
 
 type Status = "idle" | "sending" | "success" | "error";
@@ -32,28 +35,32 @@ export default function ContactSection() {
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (status === "sending") return;
+
     setStatus("sending");
     setErrorMsg("");
 
     try {
-      const res = await fetch("/.netlify/functions/contact", {
+      // ✅ Vercel Serverless Function (api/contact.ts)
+      const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
 
+      const data = await res.json().catch(() => null);
+
       if (!res.ok) {
-        const data = await res.json().catch(() => null);
         throw new Error(data?.error || "No se pudo enviar el mensaje.");
       }
 
       setStatus("success");
       setForm(initialState);
-      setTimeout(() => setStatus("idle"), 3500);
+      window.setTimeout(() => setStatus("idle"), 3500);
     } catch (err: any) {
       setStatus("error");
       setErrorMsg(err?.message || "Error enviando tu mensaje.");
-      setTimeout(() => setStatus("idle"), 4500);
+      window.setTimeout(() => setStatus("idle"), 4500);
     }
   };
 
@@ -63,30 +70,40 @@ export default function ContactSection() {
         {/* Header */}
         <div className="ct-header">
           <div className="ct-kicker">
-            <span className="ct-kickerIc" aria-hidden="true">📩</span>
+            <span className="ct-kickerIc" aria-hidden="true">
+              📩
+            </span>
             <span>Contacto</span>
           </div>
 
           <h2 className="ct-title">Cotiza rápido tu material</h2>
           <p className="ct-subtitle">
-            Déjanos tus datos y lo que necesitas. Te respondemos con disponibilidad,
-            tiempos y costo estimado.
+            Déjanos tus datos y lo que necesitas. Te respondemos con
+            disponibilidad, tiempos y costo estimado.
           </p>
 
-          {/* Quick info cards (sin “Asesoría”) */}
+          {/* Quick info cards */}
           <div className="ct-infoGrid" aria-label="Beneficios de contacto">
             <div className="ct-infoCard">
-              <span className="ct-ic" aria-hidden="true">🚚</span>
+              <span className="ct-ic" aria-hidden="true">
+                🚚
+              </span>
               <div>
                 <div className="ct-infoTitle">Entregas zona centro</div>
-                <div className="ct-infoText">Cobertura en CDMX y estados cercanos.</div>
+                <div className="ct-infoText">
+                  Cobertura en CDMX y estados cercanos.
+                </div>
               </div>
             </div>
             <div className="ct-infoCard">
-              <span className="ct-ic" aria-hidden="true">🧾</span>
+              <span className="ct-ic" aria-hidden="true">
+                🧾
+              </span>
               <div>
                 <div className="ct-infoTitle">Cotización clara</div>
-                <div className="ct-infoText">Respuesta con precio y tiempos.</div>
+                <div className="ct-infoText">
+                  Respuesta con precio y tiempos.
+                </div>
               </div>
             </div>
           </div>
@@ -96,17 +113,40 @@ export default function ContactSection() {
         <div className="ct-card">
           <div className="ct-cardHeader">
             <div className="ct-cardTitle">
-              <span className="ct-cardIcon" aria-hidden="true">🧪</span>
+              <span className="ct-cardIcon" aria-hidden="true">
+                🧪
+              </span>
               Solicitar información
             </div>
             <div className="ct-cardHint">Campos obligatorios *</div>
           </div>
 
           <form className="ct-form" onSubmit={onSubmit}>
+            {/* Honeypot (oculto): si bots lo llenan, el backend lo ignora */}
+            <input
+              type="text"
+              name="bot-field"
+              value={form["bot-field"] || ""}
+              onChange={onChange("bot-field")}
+              tabIndex={-1}
+              autoComplete="off"
+              aria-hidden="true"
+              style={{
+                position: "absolute",
+                left: "-10000px",
+                top: "auto",
+                width: 1,
+                height: 1,
+                overflow: "hidden",
+              }}
+            />
+
             <div className="ct-grid">
               <label className="ct-field">
                 <span className="ct-label">
-                  <span className="ct-miniIc" aria-hidden="true">🏢</span>
+                  <span className="ct-miniIc" aria-hidden="true">
+                    🏢
+                  </span>
                   Empresa *
                 </span>
                 <input
@@ -121,7 +161,9 @@ export default function ContactSection() {
 
               <label className="ct-field">
                 <span className="ct-label">
-                  <span className="ct-miniIc" aria-hidden="true">👤</span>
+                  <span className="ct-miniIc" aria-hidden="true">
+                    👤
+                  </span>
                   Nombre *
                 </span>
                 <input
@@ -136,7 +178,9 @@ export default function ContactSection() {
 
               <label className="ct-field">
                 <span className="ct-label">
-                  <span className="ct-miniIc" aria-hidden="true">✉️</span>
+                  <span className="ct-miniIc" aria-hidden="true">
+                    ✉️
+                  </span>
                   Correo *
                 </span>
                 <input
@@ -152,7 +196,9 @@ export default function ContactSection() {
 
               <label className="ct-field">
                 <span className="ct-label">
-                  <span className="ct-miniIc" aria-hidden="true">📞</span>
+                  <span className="ct-miniIc" aria-hidden="true">
+                    📞
+                  </span>
                   Teléfono *
                 </span>
                 <input
@@ -169,7 +215,9 @@ export default function ContactSection() {
 
             <label className="ct-field ct-fieldFull">
               <span className="ct-label">
-                <span className="ct-miniIc" aria-hidden="true">🧫</span>
+                <span className="ct-miniIc" aria-hidden="true">
+                  🧫
+                </span>
                 Material requerido *
               </span>
               <textarea
@@ -184,13 +232,21 @@ export default function ContactSection() {
             </label>
 
             <div className="ct-actions">
-              <button type="submit" className="ct-btn" disabled={status === "sending"}>
+              <button
+                type="submit"
+                className="ct-btn"
+                disabled={status === "sending"}
+              >
                 {status === "sending" ? "Enviando..." : "Enviar solicitud"}
-                <span className="ct-btnArrow" aria-hidden="true">→</span>
+                <span className="ct-btnArrow" aria-hidden="true">
+                  →
+                </span>
               </button>
 
               <div className="ct-privacy">
-                <span className="ct-privacyIc" aria-hidden="true">🔒</span>
+                <span className="ct-privacyIc" aria-hidden="true">
+                  🔒
+                </span>
                 Tus datos se usan solo para responder tu solicitud.
               </div>
             </div>
