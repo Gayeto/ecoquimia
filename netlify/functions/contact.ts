@@ -106,7 +106,7 @@ export const handler: Handler = async (event) => {
   try {
     await transporter.sendMail({
       from: `"${FROM_NAME || "EcoQuimia"}" <${SMTP_USER}>`,
-      to: TO_EMAIL || "hector.andrade@ecoquimia.com",
+      to: TO_EMAIL || "handrade1404@gmail.com",
       replyTo: data.correo, // para responder directo al cliente
       subject,
       text,
