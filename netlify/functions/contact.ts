@@ -29,7 +29,10 @@ export const handler: Handler = async (event) => {
   try {
     data = JSON.parse(event.body || "{}");
   } catch {
-    return { statusCode: 400, body: JSON.stringify({ error: "JSON inválido." }) };
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ error: "JSON inválido." }),
+    };
   }
 
   // Honeypot (si algún bot lo llena, fingimos OK y no mandamos nada)
@@ -37,26 +40,31 @@ export const handler: Handler = async (event) => {
     return { statusCode: 200, body: JSON.stringify({ ok: true }) };
   }
 
-  const required: (keyof Payload)[] = ["empresa", "nombre", "correo", "telefono", "material"];
+  const required: (keyof Payload)[] = [
+    "empresa",
+    "nombre",
+    "correo",
+    "telefono",
+    "material",
+  ];
   for (const k of required) {
     const v = String(data[k] ?? "").trim();
-    if (!v) return { statusCode: 400, body: JSON.stringify({ error: `Falta campo: ${k}` }) };
+    if (!v)
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: `Falta campo: ${k}` }),
+      };
   }
 
-  const {
-    SMTP_HOST,
-    SMTP_PORT,
-    SMTP_USER,
-    SMTP_PASS,
-    TO_EMAIL,
-    FROM_NAME,
-  } = process.env;
+  const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, TO_EMAIL, FROM_NAME } =
+    process.env;
 
   if (!SMTP_HOST || !SMTP_USER || !SMTP_PASS) {
     return {
       statusCode: 500,
       body: JSON.stringify({
-        error: "Faltan variables SMTP en Netlify (SMTP_HOST/SMTP_USER/SMTP_PASS).",
+        error:
+          "Faltan variables SMTP en Netlify (SMTP_HOST/SMTP_USER/SMTP_PASS).",
       }),
     };
   }
@@ -90,7 +98,7 @@ export const handler: Handler = async (event) => {
       <p style="margin:0 0 10px"><b>Teléfono:</b> ${esc(data.telefono)}</p>
       <p style="margin:0 0 8px"><b>Material requerido:</b></p>
       <pre style="white-space:pre-wrap;background:#f6f7f9;padding:12px;border-radius:10px;border:1px solid #e7e8ec">${esc(
-        data.material
+        data.material,
       )}</pre>
     </div>
   `;
@@ -98,7 +106,7 @@ export const handler: Handler = async (event) => {
   try {
     await transporter.sendMail({
       from: `"${FROM_NAME || "EcoQuimia"}" <${SMTP_USER}>`,
-      to: TO_EMAIL || "gayeto25@gmail.com",
+      to: TO_EMAIL || "hector.andrade@ecoquimia.com",
       replyTo: data.correo, // para responder directo al cliente
       subject,
       text,
@@ -109,7 +117,10 @@ export const handler: Handler = async (event) => {
   } catch (e: any) {
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: "No se pudo enviar el correo.", detail: e?.message }),
+      body: JSON.stringify({
+        error: "No se pudo enviar el correo.",
+        detail: e?.message,
+      }),
     };
   }
 };

@@ -5,7 +5,7 @@ import { VIDEO_CLIPS } from "../data/videos";
 const LOGO_SRC = "/images/logo.png";
 
 /**
- * ✅ Ajusta aquí el “close-up”:
+ * ✅ Ajusta aquí el "close-up":
  * - 1.00 = se ve completo (más barras)
  * - 1.05 = balance pro (menos barras, casi nada de recorte)
  * - 1.10+ = más grande (puede empezar a recortar un poco)
@@ -24,7 +24,7 @@ export default function VideoAutoPlay() {
   return (
     <section
       id="videos"
-      className="relative h-screen w-full overflow-hidden bg-black"
+      className="relative h-screen w-full overflow-hidden bg-[#e8f4f8]"
       style={{ marginTop: 0, paddingTop: 0 }}
     >
       {/* ✅ margen lateral pequeño */}
@@ -40,19 +40,10 @@ export default function VideoAutoPlay() {
               transition={{ duration: 0.9, ease: "easeInOut" }}
               className="absolute inset-0"
             >
-              {/* ✅ Fondo blur usando poster (para que las barras NO se vean negras) */}
-              {clip?.poster ? (
-                <img
-                  src={clip.poster}
-                  alt=""
-                  className="absolute inset-0 h-full w-full object-cover blur-2xl scale-110 opacity-45"
-                  draggable={false}
-                />
-              ) : (
-                <div className="absolute inset-0 bg-black" />
-              )}
+              {/* ✅ Fondo integrado con el color de fondo exterior */}
+              <div className="absolute inset-0 bg-[#e8f4f8]" />
 
-              {/* ✅ Video con menos “barras” pero sin close-up agresivo */}
+              {/* ✅ Video con menos "barras" pero sin close-up agresivo */}
               <video
                 src={clip?.src}
                 autoPlay
@@ -65,14 +56,10 @@ export default function VideoAutoPlay() {
                   CONTAIN_SCALE, // 👈 ajusta aquí
                 ].join(" ")}
               />
-
-              {/* Overlay sutil tipo cine */}
-              <div className="pointer-events-none absolute inset-0 z-20 bg-gradient-to-t from-black/45 via-black/15 to-black/25" />
-              <div className="pointer-events-none absolute inset-0 z-20 shadow-[inset_0_0_140px_rgba(0,0,0,0.55)]" />
             </motion.div>
           </AnimatePresence>
 
-          {/* --- LOGO CENTRADO --- */}
+          {/* --- LOGO CENTRADO MÁS GRANDE --- */}
           <div className="pointer-events-none absolute inset-0 z-30 flex items-center justify-center">
             <motion.img
               key="main-logo"
@@ -83,9 +70,9 @@ export default function VideoAutoPlay() {
               alt="Ecoquimia"
               className={[
                 "select-none",
-                "w-[260px] sm:w-[380px] md:w-[480px]",
-                "max-w-[82vw] h-auto",
-                "drop-shadow-[0_18px_60px_rgba(0,0,0,0.55)]",
+                "w-[340px] sm:w-[480px] md:w-[620px] lg:w-[720px]",
+                "max-w-[88vw] h-auto",
+                "drop-shadow-[0_22px_70px_rgba(0,0,0,0.65)]",
               ].join(" ")}
               draggable={false}
             />
