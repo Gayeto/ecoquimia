@@ -1,4 +1,5 @@
-import { Resend } from "resend";
+import type { VercelRequest, VercelResponse } from "@vercel/node";
+import nodemailer from "nodemailer";
 
 type Payload = {
   empresa: string;
@@ -17,11 +18,13 @@ const esc = (s: string) =>
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
 
-export default async function handler(req: any, res: any) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== "POST") return res.status(405).send("Method Not Allowed");
 
-  const data = (req.body || {}) as Partial<Payload>;
+  const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
+  const data = (body || {}) as Partial<Payload>;
 
+  // Honeypot
   if (data["bot-field"]) return res.status(200).json({ ok: true });
 
   const required: (keyof Payload)[] = [
@@ -37,10 +40,14 @@ export default async function handler(req: any, res: any) {
     if (!v) return res.status(400).json({ error: `Falta campo: ${k}` });
   }
 
-  const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey) return res.status(500).json({ error: "Falta RESEND_API_KEY." });
+  const GMAIL_USER = process.env.GMAIL_USER;
+  const GMAIL_APP_PASSWORD = process.env.GMAIL_APP_PASSWORD;
 
-  const resend = new Resend(apiKey);
+  if (!GMAIL_USER || !GMAIL_APP_PASSWORD) {
+    return res.status(500).json({
+      error: "Faltan variables GMAIL_USER o GMAIL_APP_PASSWORD en Vercel.",
+    });
+  }
 
   const subject = `EcoQuimia — Nueva solicitud (${data.empresa})`;
 
@@ -67,19 +74,26 @@ export default async function handler(req: any, res: any) {
   `;
 
   try {
-    await resend.emails.send({
-      // Para pruebas puedes usar onboarding@resend.dev
-      // Para producción, lo ideal es un from de tu dominio verificado (ej: contacto@ecoquimia.com)
-      from: process.env.FROM_EMAIL || "EcoQuimia <onboarding@resend.dev>",
-      to: [process.env.TO_EMAIL || "hector.andrade@ecoquimia.com"],
-      replyTo: String(data.correo),
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: GMAIL_USER,
+        pass: GMAIL_APP_PASSWORD, // App Password
+      },
+    });
+
+    await transporter.sendMail({
+      from: `EcoQuimia <${GMAIL_USER}>`,
+      to: "handrade1404@gmail.com",
       subject,
       text,
       html,
+      replyTo: String(data.correo), // para responder directo al cliente
     });
 
     return res.status(200).json({ ok: true });
   } catch (e: any) {
+    console.error("SMTP error:", e);
     return res.status(500).json({
       error: "No se pudo enviar el correo.",
       detail: e?.message,
