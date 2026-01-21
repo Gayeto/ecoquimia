@@ -90,7 +90,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // 6. Enviar Correo
     await transporter.sendMail({
       from: `"EcoQuimia Web" <${GMAIL_USER}>`,
-      to: "handrade1404@gmail.com",
+      to: "hector.andrade@ecoquimia.com",
       replyTo: String(data.correo),
       subject,
       text,
